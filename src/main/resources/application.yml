@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: SmartDoc Payment Service
+
+server:
+  port: 8089
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+payment:
+  provider: stripe
+  checkout-base-url: https://checkout.stripe.com/pay
+  stripe-webhook-secret: dev-webhook-secret
+  internal-token: dev-internal-token
+  webhook-tolerance-seconds: 300
+  default-plan:
+    id: pro-monthly
+    name: SmartDoc Pro Monthly
+    price-cents: 1999
+    currency: usd
+    interval: month
+    active: true
+
