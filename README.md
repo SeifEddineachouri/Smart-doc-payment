@@ -8,6 +8,7 @@ This service is the Spring Boot version of the SmartDoc payment microservice. It
 - entitlement activation/deactivation
 - refund endpoint protected by an internal token
 - in-memory repository for development and tests
+- default plans: `pro-monthly` and `starter-pack` in `eur`
 
 ## Run locally
 
@@ -38,7 +39,11 @@ cd C:\Users\seifa\Documents\smartdoc\payment-service-spring
 
 ## Environment variables
 - `PAYMENT_PROVIDER`
+- `PAYMENT_CHECKOUT_MODE`
 - `PAYMENT_CHECKOUT_BASE_URL`
+- `PAYMENT_CHECKOUT_RETURN_URL`
+- `PAYMENT_CHECKOUT_CANCEL_URL`
+- `PAYMENT_STRIPE_SECRET_KEY`
 - `PAYMENT_STRIPE_WEBHOOK_SECRET`
 - `PAYMENT_INTERNAL_TOKEN`
 - `PAYMENT_WEBHOOK_TOLERANCE_SECONDS`
@@ -48,6 +53,8 @@ cd C:\Users\seifa\Documents\smartdoc\payment-service-spring
 - `PAYMENT_DEFAULT_PLAN_CURRENCY`
 - `PAYMENT_DEFAULT_PLAN_INTERVAL`
 - `PAYMENT_DEFAULT_PLAN_ACTIVE`
+
+Default local configuration uses `eur` for the payment plans.
 
 ## Next step
 Connect this service to the main SmartDoc app and swap the in-memory repository for a database-backed implementation.

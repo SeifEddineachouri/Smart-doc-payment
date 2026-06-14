@@ -1,3 +1,3 @@
 payment:
-  checkout-base-url: https://checkout.stripe.com/pay
+  checkout-base-url: ${PAYMENT_CHECKOUT_BASE_URL:https://checkout.stripe.com/pay}
 

@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -19,6 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@ActiveProfiles("test")
 class PaymentControllerTest {
     @Autowired
     private MockMvc mockMvc;
@@ -28,6 +30,18 @@ class PaymentControllerTest {
 
     @Autowired
     private PaymentProperties properties;
+
+    @Test
+    void stripeSecretKeyIsLoadedFromEnvironment() {
+        String expected = System.getenv("PAYMENT_STRIPE_SECRET_KEY");
+        if (expected == null) {
+            expected = "";
+        }
+        org.junit.jupiter.api.Assertions.assertEquals(
+            expected,
+            properties.stripeSecretKey()
+        );
+    }
 
     @Test
     void checkoutSessionIsIdempotent() throws Exception {
@@ -58,6 +72,37 @@ class PaymentControllerTest {
         String secondSessionId = objectMapper.readTree(second).get("sessionId").asText();
 
         org.junit.jupiter.api.Assertions.assertEquals(firstSessionId, secondSessionId);
+    }
+
+    @Test
+    void checkoutSessionAcceptsDefaultPlanAliases() throws Exception {
+        mockMvc.perform(post("/api/v1/payments/checkout-session")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                    {
+                      "userId": "user-alias",
+                      "planId": "Pro Monthly"
+                    }
+                    """))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.planId").value("pro-monthly"))
+            .andExpect(jsonPath("$.planName").value("SmartDoc Pro Monthly"));
+    }
+
+    @Test
+    void checkoutSessionAcceptsStarterPackAlias() throws Exception {
+        mockMvc.perform(post("/api/v1/payments/checkout-session")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                    {
+                      "userId": "user-starter",
+                      "planId": "starter pack"
+                    }
+                    """))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.planId").value("starter-pack"))
+            .andExpect(jsonPath("$.planName").value("Starter Pack"))
+            .andExpect(jsonPath("$.currency").value("eur"));
     }
 
     @Test

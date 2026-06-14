@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -40,6 +41,14 @@ public class PaymentController {
     @GetMapping("/status/{userId}")
     public PaymentStatusResponse getStatus(@PathVariable String userId) {
         return paymentService.getStatus(userId);
+    }
+
+    @PostMapping("/confirm")
+    public EntitlementResponse confirmCheckout(
+        @RequestParam("session_id") String sessionId,
+        @RequestParam(value = "user_id", required = false) String userId
+    ) {
+        return paymentService.confirmCheckout(sessionId, userId);
     }
 
     @PostMapping(value = "/webhooks/stripe", consumes = MediaType.APPLICATION_JSON_VALUE)

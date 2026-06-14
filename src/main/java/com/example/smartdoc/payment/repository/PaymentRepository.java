@@ -5,10 +5,13 @@ import com.example.smartdoc.payment.model.Entitlement;
 import com.example.smartdoc.payment.model.Plan;
 import com.example.smartdoc.payment.model.RefundRecord;
 import com.example.smartdoc.payment.model.WebhookEventRecord;
+import java.util.Collection;
 import java.util.Optional;
 
 public interface PaymentRepository {
     Plan getPlan(String planId);
+
+    Collection<Plan> listPlans();
 
     CheckoutSession saveCheckoutSession(CheckoutSession session);
 
